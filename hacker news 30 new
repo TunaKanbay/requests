@@ -1,0 +1,27 @@
+import requests
+
+# Hacker News API URL
+top_stories_url = "https://hacker-news.firebaseio.com/v0/topstories.json"
+item_url = "https://hacker-news.firebaseio.com/v0/item/{}.json"
+
+# İlk 30 haberi almak için
+response = requests.get(top_stories_url)
+top_30_story_ids = response.json()[:30]
+
+# Haberlerin başlıklarını saklamak için bir liste
+stories = []
+
+# Her haberin detaylarını almak için döngü
+for story_id in top_30_story_ids:
+    story_response = requests.get(item_url.format(story_id))
+    story_data = story_response.json()
+    if story_data:  # Veri mevcutsa
+        stories.append({
+            'title': story_data.get('title', 'No title'),
+            'url': story_data.get('url', 'No URL')
+        })
+
+# Başlıkları ve URL'leri yazdır
+for index, story in enumerate(stories, start=1):
+    print(f"{index}. {story['title']} - {story['url']}")
+
